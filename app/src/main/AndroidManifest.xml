@@ -5,6 +5,8 @@
     <uses-feature android:name="android.hardware.touchscreen"
         android:required="false" />
     <uses-feature android:name="android.software.leanback" android:required="false" />
+    <uses-permission
+        android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="true"
@@ -26,6 +28,18 @@
         <activity android:name=".ActividadDetalles" />
         <activity android:name=".PlaybackOverlayActivity" />
 
+        <service
+            android:name=".UpdateRecommendationService"
+            android:enabled="true" />
+
+        <receiver
+            android:name=".BootupActivity"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
