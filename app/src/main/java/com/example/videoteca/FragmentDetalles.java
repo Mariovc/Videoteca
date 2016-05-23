@@ -1,8 +1,19 @@
 package com.example.videoteca;
 
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.DetailsFragment;
+import android.support.v17.leanback.widget.Action;
+import android.support.v17.leanback.widget.ArrayObjectAdapter;
+import android.support.v17.leanback.widget.ClassPresenterSelector;
+import android.support.v17.leanback.widget.DetailsOverviewRow;
+import android.support.v17.leanback.widget.DetailsOverviewRowPresenter;
+import android.support.v17.leanback.widget.ListRow;
+import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.OnActionClickedListener;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 
 import com.bumptech.glide.Glide;
@@ -16,6 +27,14 @@ import com.bumptech.glide.request.target.Target;
  * Date: 20/05/2016
  */
 public class FragmentDetalles extends DetailsFragment {
+
+    private static final int ACTION_WATCH_TRAILER = 1;
+    private static final int DETAIL_THUMB_WIDTH = 274;
+    private static final int DETAIL_THUMB_HEIGHT = 274;
+    private DetailsOverviewRowPresenter mDorPresenter;
+//    private DetailRowBuilderTask mDetailRowBuilderTask;
+    private static final int NUM_COLS = 10;
+
     private Movie mSelectedMovie;
     private Target mBackgroundTarget;
     private DisplayMetrics mMetrics;
@@ -29,6 +48,27 @@ public class FragmentDetalles extends DetailsFragment {
         mSelectedMovie = (Movie) getActivity().getIntent()
                 .getSerializableExtra(MOVIE);
         updateBackground(mSelectedMovie.getBackgroundImageURI().toString());
+        mDorPresenter =new DetailsOverviewRowPresenter(
+                new DetailsDescriptionPresenter());
+        mMetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+        cargarDetalles(mSelectedMovie);
+        mDorPresenter.setSharedElementEnterTransition(getActivity(),
+                ActividadDetalles.SHARED_ELEMENT_NAME);
+        mDorPresenter.setOnActionClickedListener(new OnActionClickedListener() {
+            @Override
+            public void onActionClicked(Action action) {
+                if (action.getId() == ACTION_WATCH_TRAILER) {
+                    Intent intent = new Intent(getActivity(),
+                            PlaybackOverlayActivity.class);
+                    intent.putExtra(getResources().getString(R.string.movie),
+                            mSelectedMovie);
+                    intent.putExtra(getResources().getString(R.string.should_start),
+                            true);
+                    startActivity(intent);
+                }
+            }
+        });
     }
     private void initBackground() {
         mBackgroundManager = BackgroundManager.getInstance(getActivity());
@@ -49,5 +89,31 @@ public class FragmentDetalles extends DetailsFragment {
                         mBackgroundManager.setDrawable(resource);
                     }
                 });
+    }
+    private void cargarDetalles(Movie mSelectedMovie){
+        final DetailsOverviewRow row = new DetailsOverviewRow(mSelectedMovie);
+        int width = Utils.convertDpToPixel(getActivity()
+                .getApplicationContext(), DETAIL_THUMB_WIDTH);
+        int height = Utils.convertDpToPixel(getActivity()
+                .getApplicationContext(), DETAIL_THUMB_HEIGHT);
+        Glide.with(getActivity())
+                .load(mSelectedMovie.getCardImageUrl())
+                .centerCrop()
+                .into(new SimpleTarget<GlideDrawable>(width, height) {
+                    @Override
+                    public void onResourceReady(GlideDrawable resource,
+                                                GlideAnimation<? super GlideDrawable>
+                                                        glideAnimation) {
+                        row.setImageDrawable(resource);
+                    }
+                });
+        Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_media_play, null);
+        row.addAction(new Action(ACTION_WATCH_TRAILER, "VER", "VÍDEO", icon));
+        ClassPresenterSelector ps = new ClassPresenterSelector();
+        ps.addClassPresenter(DetailsOverviewRow.class, mDorPresenter);
+        ps.addClassPresenter(ListRow.class, new ListRowPresenter());
+        ArrayObjectAdapter adapter = new ArrayObjectAdapter(ps);
+        adapter.add(row);
+        setAdapter(adapter);
     }
 }

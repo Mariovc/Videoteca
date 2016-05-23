@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Videoteca</string>
+    <string name="movie">Movie</string>
+    <string name="should_start">shouldStart</string>
+    <string name="related_movies">Related Videos</string>
+    <string name="popular_header">Popular Videos</string>
+
+
+    <!-- Error messages -->
+    <string name="video_error_media_load_timeout">Media loading timed out</string>
+    <string name="video_error_server_inaccessible">Media server was not reachable</string>
+    <string name="video_error_unknown_error">Failed to load video</string>
 </resources>
