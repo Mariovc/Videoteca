@@ -25,7 +25,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ActividadDetalles" />
+        <activity android:name=".ActividadDetalles">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
         <activity android:name=".PlaybackOverlayActivity" />
 
         <service
@@ -40,6 +46,11 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <provider android:name=".VideoContentProvider"
+            android:authorities="com.example.videoteca"
+            android:exported="true" />
+
     </application>
 
 </manifest>

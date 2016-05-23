@@ -5,6 +5,11 @@
     <string name="related_movies">Related Videos</string>
     <string name="popular_header">Popular Videos</string>
 
+    <!--Search-->
+    <string name="search_label">Videoteca</string>
+    <string name="search_hint">Búsqueda de videos</string>
+    <string name="settings_description">Videoteca</string>
+
 
     <!-- Error messages -->
     <string name="video_error_media_load_timeout">Media loading timed out</string>
